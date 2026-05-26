@@ -23,6 +23,9 @@ class _ProdukFormState extends State<ProdukForm> {
   final _kodeProdukTextboxController = TextEditingController();
   final _namaProdukTextboxController = TextEditingController();
   final _hargaProdukTextboxController = TextEditingController();
+  final _stokTextboxController = TextEditingController();
+  final _satuanTextboxController = TextEditingController();
+  final _penerimaTextboxController = TextEditingController();
 
   @override
   void initState() {
@@ -42,6 +45,12 @@ class _ProdukFormState extends State<ProdukForm> {
             widget.produk!.namaProduk!;
         _hargaProdukTextboxController.text =
             widget.produk!.hargaProduk.toString();
+        _stokTextboxController.text =
+            widget.produk!.stok.toString();
+        _satuanTextboxController.text =
+            widget.produk!.satuan!;
+        _penerimaTextboxController.text =
+            widget.produk!.penerima!;        
       });
     } else {
       judul = "TAMBAH PRODUK";
@@ -65,6 +74,9 @@ class _ProdukFormState extends State<ProdukForm> {
                 _kodeProdukTextField(),
                 _namaProdukTextField(),
                 _hargaProdukTextField(),
+                _stokTextField(),
+                _satuanTextField(),
+                _penerimaTextField(),
                 _buttonSubmit(),
               ],
             ),
@@ -122,6 +134,54 @@ class _ProdukFormState extends State<ProdukForm> {
     );
   }
 
+  Widget _stokTextField() {
+    return TextFormField(
+      decoration: const InputDecoration(
+        labelText: "Stok",
+      ),
+      keyboardType: TextInputType.number,
+      controller: _stokTextboxController,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return "Stok harus diisi";
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _satuanTextField() {
+    return TextFormField(
+      decoration: const InputDecoration(
+        labelText: "Satuan",
+      ),
+      keyboardType: TextInputType.text,
+      controller: _satuanTextboxController,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return "Satuan harus diisi";
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _penerimaTextField() {
+    return TextFormField(
+      decoration: const InputDecoration(
+        labelText: "Penerima",
+      ),
+      keyboardType: TextInputType.text,
+      controller: _penerimaTextboxController,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return "Penerima harus diisi";
+        }
+        return null;
+      },
+    );
+  }
+
   Widget _buttonSubmit() {
     return OutlinedButton(
       child: Text(tombolSubmit),
@@ -149,14 +209,18 @@ class _ProdukFormState extends State<ProdukForm> {
     Produk createProduk = Produk(id: null);
     createProduk.kodeProduk = _kodeProdukTextboxController.text;
     createProduk.namaProduk = _namaProdukTextboxController.text;
-    createProduk.hargaProduk =
-        int.parse(_hargaProdukTextboxController.text);
+    createProduk.hargaProduk = double.parse(_hargaProdukTextboxController.text);
+    createProduk.stok = int.parse(_stokTextboxController.text);
+    createProduk.satuan = _satuanTextboxController.text;
+    createProduk.penerima = _penerimaTextboxController.text;
 
     ProdukBloc.addProduk(produk: createProduk).then(
       (value) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (BuildContext context) => const ProdukPage(),
+            builder: (BuildContext context) => ProdukPage(
+              onThemeChanged: () {},
+            ),
           ),
         );
       },
@@ -184,14 +248,18 @@ class _ProdukFormState extends State<ProdukForm> {
     updateProduk.id = widget.produk!.id;
     updateProduk.kodeProduk = _kodeProdukTextboxController.text;
     updateProduk.namaProduk = _namaProdukTextboxController.text;
-    updateProduk.hargaProduk =
-        int.parse(_hargaProdukTextboxController.text);
+    updateProduk.hargaProduk = double.parse(_hargaProdukTextboxController.text);
+    updateProduk.stok = int.parse(_stokTextboxController.text);
+    updateProduk.satuan = _satuanTextboxController.text;
+    updateProduk.penerima = _penerimaTextboxController.text;
 
     ProdukBloc.updateProduk(produk: updateProduk).then(
       (value) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (BuildContext context) => const ProdukPage(),
+            builder: (BuildContext context) => ProdukPage(
+              onThemeChanged: () {},
+            ),
           ),
         );
       },

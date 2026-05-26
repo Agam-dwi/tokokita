@@ -1,11 +1,12 @@
-// registrasi_page.dart
 import 'package:flutter/material.dart';
 import 'package:tokokita/bloc/registrasi_bloc.dart';
 import 'package:tokokita/widget/success_dialog.dart';
 import 'package:tokokita/widget/warning_dialog.dart';
+import 'package:tokokita/ui/login_page.dart';
 
 class RegistrasiPage extends StatefulWidget {
-  const RegistrasiPage({Key? key}) : super(key: key);
+  final VoidCallback onThemeChanged;
+  const RegistrasiPage({Key? key, required this.onThemeChanged,}) : super(key: key);
 
   @override
   _RegistrasiPageState createState() => _RegistrasiPageState();
@@ -24,6 +25,12 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Registrasi"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.dark_mode),
+            onPressed: widget.onThemeChanged,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -37,7 +44,8 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
                 _emailTextField(),
                 _passwordTextField(),
                 _passwordKonfirmasiTextField(),
-                _buttonRegistrasi()
+                _buttonRegistrasi(),
+                _menuLogin()
               ],
             ),
           ),
@@ -130,6 +138,25 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
           if (!_isLoading) _submit();
         }
       },
+    );
+  }
+
+  Widget _menuLogin() {
+    return Center(
+      child: InkWell(
+        child: const Text(
+          "Login",
+          style: TextStyle(color: Colors.blue),
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoginPage(onThemeChanged: widget.onThemeChanged),
+            ),
+          );
+        },
+      ),
     );
   }
 

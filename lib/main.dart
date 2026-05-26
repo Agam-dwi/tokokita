@@ -1,4 +1,3 @@
-// main.dart
 import 'package:flutter/material.dart';
 import 'package:tokokita/helpers/user_info.dart';
 import 'package:tokokita/ui/login_page.dart';
@@ -12,11 +11,15 @@ class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  Widget page = const CircularProgressIndicator();
+  Widget page = const Center(
+    child: CircularProgressIndicator(),
+  );
+
+  bool isDark = false;
 
   @override
   void initState() {
@@ -24,18 +27,26 @@ class _MyAppState extends State<MyApp> {
     isLogin();
   }
 
+  void toggleTheme() {
+    setState(() {
+      isDark = !isDark;
+    });
+  }
+
   void isLogin() async {
     var token = await UserInfo().getToken();
 
-    if (token != null) {
-      setState(() {
-        page = const ProdukPage();
-      });
-    } else {
-      setState(() {
-        page = const LoginPage();
-      });
-    }
+    setState(() {
+      if (token != null) {
+        page = ProdukPage(
+          onThemeChanged: toggleTheme,
+        );
+      } else {
+        page = LoginPage(
+          onThemeChanged: toggleTheme,
+        );
+      }
+    });
   }
 
   @override
@@ -43,12 +54,18 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Toko Kita',
       debugShowCheckedModeBanner: false,
+
+      theme: ThemeData.light(),
+
+      darkTheme: ThemeData.dark(),
+
+      themeMode:
+          isDark ? ThemeMode.dark : ThemeMode.light,
+
       home: page,
     );
   }
 }
-
-
 
 
 

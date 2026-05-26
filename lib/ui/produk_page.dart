@@ -6,20 +6,45 @@ import 'package:tokokita/ui/login_page.dart';
 import 'package:tokokita/ui/produk_detail.dart';
 import 'package:tokokita/ui/produk_form.dart';
 
+enum SortType {
+  az,
+  za,
+  newest,
+}
+
 class ProdukPage extends StatefulWidget {
-  const ProdukPage({Key? key}) : super(key: key);
+  final VoidCallback onThemeChanged;
+
+  const ProdukPage({
+    Key? key,
+    required this.onThemeChanged,
+  }) : super(key: key);
 
   @override
   _ProdukPageState createState() => _ProdukPageState();
 }
 
 class _ProdukPageState extends State<ProdukPage> {
+  final TextEditingController searchController =
+    TextEditingController();
+
+  List produkList = [];
+  List filteredList = [];
+
+
+  SortType selectedSort = SortType.newest;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('List Produk'),
+        
         actions: [
+          IconButton(
+          icon: const Icon(Icons.dark_mode),
+          onPressed: widget.onThemeChanged,
+        ),
           Padding(
             padding: const EdgeInsets.only(right: 20.0),
             child: GestureDetector(
@@ -47,7 +72,9 @@ class _ProdukPageState extends State<ProdukPage> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const LoginPage(),
+                      builder: (context) => LoginPage(
+                        onThemeChanged: widget.onThemeChanged,
+                      ),
                     ),
                   );
                 });
@@ -56,25 +83,141 @@ class _ProdukPageState extends State<ProdukPage> {
           ],
         ),
       ),
+
       body: FutureBuilder<List>(
-        future: ProdukBloc.getProduks(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            print(snapshot.error);
+      future: ProdukBloc.getProduks(),
+      builder: (context, snapshot) {
+
+        if (snapshot.hasError) {
+          print(snapshot.error);
+        }
+
+        if (snapshot.hasData) {
+
+          produkList = snapshot.data!;
+
+          if (filteredList.isEmpty &&
+              searchController.text.isEmpty) {
+
+            filteredList = List.from(produkList);
+
+            sortProduk(selectedSort);
           }
 
-          return snapshot.hasData
-              ? ListProduk(
-                  list: snapshot.data,
-                )
-              : const Center(
-                  child: CircularProgressIndicator(),
-                );
-        },
-      ),
+          return Column(
+            children: [
+
+              // SEARCH
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: searchController,
+                  decoration: const InputDecoration(
+                    hintText: "Cari produk...",
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: filterProduk,
+                ),
+              ),
+
+              // SORT
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8),
+                child: DropdownButton<SortType>(
+                  isExpanded: true,
+                  value: selectedSort,
+
+                  items: const [
+
+                    DropdownMenuItem(
+                      value: SortType.az,
+                      child: Text("A-Z"),
+                    ),
+
+                    DropdownMenuItem(
+                      value: SortType.za,
+                      child: Text("Z-A"),
+                    ),
+
+                    DropdownMenuItem(
+                      value: SortType.newest,
+                      child: Text("Newest"),
+                    ),
+                  ],
+
+                  onChanged: (value) {
+
+                    setState(() {
+                      sortProduk(value!);
+                    });
+                  },
+                ),
+              ),
+
+              // LIST PRODUK
+              Expanded(
+                child: ListProduk(
+                  list: filteredList,
+                ),
+              ),
+            ],
+          );
+        }
+
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    ),
     );
   }
+  
+
+  void filterProduk(String keyword) {
+
+  filteredList = produkList.where((produk) {
+    return produk.namaProduk!
+        .toLowerCase()
+        .contains(keyword.toLowerCase());
+  }).toList();
+
+  sortProduk(selectedSort);
+
+  setState(() {});
 }
+
+  void sortProduk(SortType type) {
+
+  selectedSort = type;
+
+  switch (type) {
+
+    case SortType.az:
+      filteredList.sort(
+        (a, b) => a.namaProduk!
+            .compareTo(b.namaProduk!),
+      );
+      break;
+
+    case SortType.za:
+      filteredList.sort(
+        (a, b) => b.namaProduk!
+            .compareTo(a.namaProduk!),
+      );
+      break;
+
+    case SortType.newest:
+      filteredList.sort(
+        (a, b) => b.id!
+            .compareTo(a.id!),
+      );
+      break;
+  }
+}
+}
+
 
 class ListProduk extends StatelessWidget {
   final List? list;
@@ -118,9 +261,24 @@ class ItemProduk extends StatelessWidget {
       child: Card(
         child: ListTile(
           title: Text(produk.namaProduk!),
-          subtitle: Text(produk.hargaProduk.toString()),
+
+          subtitle: Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Rp ${produk.hargaProduk!.toStringAsFixed(2)}",
+              ),
+
+              Text(
+                "Stok : ${produk.stok} ${produk.satuan}",
+              ),
+            ],
+          ),
         ),
-      ),
+      )
     );
   }
+
+  
 }

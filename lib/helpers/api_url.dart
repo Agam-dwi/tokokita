@@ -26,4 +26,12 @@ class ApiUrl {
   static String deleteProduk(int id) {
     return '$baseUrl/produk/$id';
   }
+
+  static String kirimBarang(int id) {
+    return '$baseUrl/produk/$id/kirim';
+  }
+
+  static String terimaBarang(int id) {
+    return '$baseUrl/produk/$id/terima';
+  }
 }

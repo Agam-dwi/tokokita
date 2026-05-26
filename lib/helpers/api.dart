@@ -81,8 +81,8 @@ class Api {
     print(response.statusCode);
     print(response.body);
     print("METHOD : PUT");
-print("PUT URL : $url");
-print("BODY : $data");
+    print("PUT URL : $url");
+    print("BODY : $data");
 
     responseJson = _returnResponse(response);
   } on SocketException {

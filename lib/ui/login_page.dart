@@ -1,4 +1,3 @@
-// login_page.dart
 import 'package:flutter/material.dart';
 import 'package:tokokita/bloc/login_bloc.dart';
 import 'package:tokokita/helpers/user_info.dart';
@@ -7,7 +6,8 @@ import 'package:tokokita/ui/registrasi_page.dart';
 import 'package:tokokita/widget/warning_dialog.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  final VoidCallback onThemeChanged;
+  const LoginPage({Key? key, required this.onThemeChanged}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -25,6 +25,12 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
+          actions: [
+          IconButton(
+            icon: const Icon(Icons.dark_mode),
+            onPressed: widget.onThemeChanged,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -112,7 +118,9 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const ProdukPage(),
+          builder: (context) => ProdukPage(
+          onThemeChanged: widget.onThemeChanged,
+        ),
         ),
       );
     }, onError: (error) {
@@ -144,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const RegistrasiPage(),
+              builder: (context) => RegistrasiPage(onThemeChanged: widget.onThemeChanged),
             ),
           );
         },
