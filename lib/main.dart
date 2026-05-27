@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Toko Kita',
+      title: 'Gudang Kita',
       debugShowCheckedModeBanner: false,
 
       theme: ThemeData.light(),
