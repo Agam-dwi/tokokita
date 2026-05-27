@@ -21,213 +21,311 @@ class ProdukPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ProdukPageState createState() => _ProdukPageState();
+  State<ProdukPage> createState() => _ProdukPageState();
 }
 
 class _ProdukPageState extends State<ProdukPage> {
   final TextEditingController searchController =
-    TextEditingController();
+      TextEditingController();
 
   List produkList = [];
   List filteredList = [];
-
 
   SortType selectedSort = SortType.newest;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor:
+          Theme.of(context).scaffoldBackgroundColor,
+
       appBar: AppBar(
-        title: const Text('List Produk'),
-        
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          'List Produk',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
         actions: [
           IconButton(
-          icon: const Icon(Icons.dark_mode),
-          onPressed: widget.onThemeChanged,
-        ),
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: GestureDetector(
-              child: const Icon(Icons.add, size: 26.0),
-              onTap: () async {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProdukForm(),
-                  ),
-                );
-              },
-            ),
-          )
+            icon: const Icon(Icons.dark_mode),
+            onPressed: widget.onThemeChanged,
+          ),
+
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProdukForm(),
+                ),
+              );
+            },
+          ),
+
+          const SizedBox(width: 8),
         ],
       ),
+
       drawer: Drawer(
-        child: ListView(
+        child: Column(
           children: [
+            UserAccountsDrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.orange.shade800,
+              ),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Icon(
+                  Icons.person,
+                  size: 40,
+                  color: Colors.orange.shade800,
+                ),
+              ),
+              accountName: const Text(
+                "Gudangkita",
+              ),
+              accountEmail: const Text(
+                "Inventory Management System",
+              ),
+            ),
+
             ListTile(
-              title: const Text('Logout'),
-              trailing: const Icon(Icons.logout),
+              leading: const Icon(Icons.inventory),
+              title: const Text("Produk"),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text("Logout"),
               onTap: () async {
                 await LogoutBloc.logout().then((value) {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) => LoginPage(
-                        onThemeChanged: widget.onThemeChanged,
+                        onThemeChanged:
+                            widget.onThemeChanged,
                       ),
                     ),
                   );
                 });
               },
-            )
+            ),
           ],
         ),
       ),
 
       body: FutureBuilder<List>(
-      future: ProdukBloc.getProduks(),
-      builder: (context, snapshot) {
+        future: ProdukBloc.getProduks(),
 
-        if (snapshot.hasError) {
-          print(snapshot.error);
-        }
-
-        if (snapshot.hasData) {
-
-          produkList = snapshot.data!;
-
-          if (filteredList.isEmpty &&
-              searchController.text.isEmpty) {
-
-            filteredList = List.from(produkList);
-
-            sortProduk(selectedSort);
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                "Terjadi Kesalahan",
+                style: TextStyle(
+                  color:
+                      Theme.of(context).colorScheme.error,
+                ),
+              ),
+            );
           }
 
-          return Column(
-            children: [
+          if (snapshot.hasData) {
+            produkList = snapshot.data!;
 
-              // SEARCH
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: searchController,
-                  decoration: const InputDecoration(
-                    hintText: "Cari produk...",
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(),
+            if (filteredList.isEmpty &&
+                searchController.text.isEmpty) {
+              filteredList = List.from(produkList);
+
+              sortProduk(selectedSort);
+            }
+
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16),
+
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius:
+                          BorderRadius.circular(14),
+
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black
+                              .withOpacity(0.05),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+
+                    child: TextField(
+                      controller: searchController,
+
+                      decoration: InputDecoration(
+                        hintText: "Cari produk...",
+                        prefixIcon:
+                            const Icon(Icons.search),
+
+                        filled: true,
+                        fillColor:
+                            Theme.of(context).cardColor,
+
+                        border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.circular(14),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+
+                      onChanged: filterProduk,
+                    ),
                   ),
-                  onChanged: filterProduk,
                 ),
-              ),
 
-              // SORT
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8),
-                child: DropdownButton<SortType>(
-                  isExpanded: true,
-                  value: selectedSort,
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                  ),
 
-                  items: const [
-
-                    DropdownMenuItem(
-                      value: SortType.az,
-                      child: Text("A-Z"),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(
+                      horizontal: 16,
                     ),
 
-                    DropdownMenuItem(
-                      value: SortType.za,
-                      child: Text("Z-A"),
+                    decoration: BoxDecoration(
+                      color:
+                          Theme.of(context).cardColor,
+
+                      borderRadius:
+                          BorderRadius.circular(14),
+
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black
+                              .withOpacity(0.05),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
 
-                    DropdownMenuItem(
-                      value: SortType.newest,
-                      child: Text("Newest"),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<SortType>(
+                        value: selectedSort,
+                        isExpanded: true,
+
+                        items: const [
+                          DropdownMenuItem(
+                            value: SortType.az,
+                            child: Text("A-Z"),
+                          ),
+
+                          DropdownMenuItem(
+                            value: SortType.za,
+                            child: Text("Z-A"),
+                          ),
+
+                          DropdownMenuItem(
+                            value: SortType.newest,
+                            child: Text("Newest"),
+                          ),
+                        ],
+
+                        onChanged: (value) {
+                          setState(() {
+                            sortProduk(value!);
+                          });
+                        },
+                      ),
                     ),
-                  ],
-
-                  onChanged: (value) {
-
-                    setState(() {
-                      sortProduk(value!);
-                    });
-                  },
+                  ),
                 ),
-              ),
 
-              // LIST PRODUK
-              Expanded(
-                child: ListProduk(
-                  list: filteredList,
+                const SizedBox(height: 10),
+
+                Expanded(
+                  child: ListProduk(
+                    list: filteredList,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            );
+          }
+
+          return const Center(
+            child: CircularProgressIndicator(),
           );
-        }
-
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    ),
+        },
+      ),
     );
   }
-  
 
   void filterProduk(String keyword) {
+    filteredList = produkList.where((produk) {
+      return produk.namaProduk!
+          .toLowerCase()
+          .contains(keyword.toLowerCase());
+    }).toList();
 
-  filteredList = produkList.where((produk) {
-    return produk.namaProduk!
-        .toLowerCase()
-        .contains(keyword.toLowerCase());
-  }).toList();
+    sortProduk(selectedSort);
 
-  sortProduk(selectedSort);
-
-  setState(() {});
-}
+    setState(() {});
+  }
 
   void sortProduk(SortType type) {
+    selectedSort = type;
 
-  selectedSort = type;
+    switch (type) {
+      case SortType.az:
+        filteredList.sort(
+          (a, b) => a.namaProduk!
+              .compareTo(b.namaProduk!),
+        );
+        break;
 
-  switch (type) {
+      case SortType.za:
+        filteredList.sort(
+          (a, b) => b.namaProduk!
+              .compareTo(a.namaProduk!),
+        );
+        break;
 
-    case SortType.az:
-      filteredList.sort(
-        (a, b) => a.namaProduk!
-            .compareTo(b.namaProduk!),
-      );
-      break;
-
-    case SortType.za:
-      filteredList.sort(
-        (a, b) => b.namaProduk!
-            .compareTo(a.namaProduk!),
-      );
-      break;
-
-    case SortType.newest:
-      filteredList.sort(
-        (a, b) => b.id!
-            .compareTo(a.id!),
-      );
-      break;
+      case SortType.newest:
+        filteredList.sort(
+          (a, b) => b.id!.compareTo(a.id!),
+        );
+        break;
+    }
   }
 }
-}
-
 
 class ListProduk extends StatelessWidget {
   final List? list;
 
-  const ListProduk({Key? key, this.list}) : super(key: key);
+  const ListProduk({
+    Key? key,
+    this.list,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      padding: const EdgeInsets.all(10),
+
       itemCount: list == null ? 0 : list!.length,
+
       itemBuilder: (context, i) {
         return ItemProduk(
           produk: list![i],
@@ -258,27 +356,108 @@ class ItemProduk extends StatelessWidget {
           ),
         );
       },
-      child: Card(
-        child: ListTile(
-          title: Text(produk.namaProduk!),
 
-          subtitle: Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 14),
+
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+
+          borderRadius: BorderRadius.circular(18),
+
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+
+          child: Row(
             children: [
-              Text(
-                "Rp ${produk.hargaProduk!.toStringAsFixed(2)}",
+              Container(
+                height: 60,
+                width: 60,
+
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade100,
+                  borderRadius:
+                      BorderRadius.circular(14),
+                ),
+
+                child: Icon(
+                  Icons.inventory_2,
+                  color: Colors.orange.shade800,
+                  size: 32,
+                ),
               ),
 
-              Text(
-                "Stok : ${produk.stok} ${produk.satuan}",
+              const SizedBox(width: 16),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
+
+                  children: [
+                    Text(
+                      produk.namaProduk!,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    Text(
+                      "Kode : ${produk.kodeProduk}",
+                    ),
+
+                    const SizedBox(height: 4),
+
+                    Text(
+                      "Stok : ${produk.stok} ${produk.satuan}",
+                      style: TextStyle(
+                        color: Colors.green.shade700,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.end,
+
+                children: [
+                  Text(
+                    "Rp ${produk.hargaProduk!.toStringAsFixed(2)}",
+
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange.shade800,
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                  ),
+                ],
               ),
             ],
           ),
         ),
-      )
+      ),
     );
   }
-
-  
 }

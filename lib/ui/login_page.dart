@@ -54,48 +54,126 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  //Membuat Textbox email
   Widget _emailTextField() {
-    return TextFormField(
-      decoration: const InputDecoration(labelText: "Email"),
-      keyboardType: TextInputType.emailAddress,
-      controller: _emailTextboxController,
-      validator: (value) {
-        if (value!.isEmpty) {
-          return 'Email harus diisi';
-        }
-        return null;
-      },
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      child: TextFormField(
+        controller: _emailTextboxController,
+        keyboardType: TextInputType.emailAddress,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Email harus diisi';
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          hintText: "Masukkan Email",
+          prefixIcon: const Icon(Icons.email),
+         
+
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide.none,
+          ),
+
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(
+           
+            ),
+          ),
+
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: const BorderSide(
+             
+              width: 2,
+            ),
+          ),
+
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 18,
+            horizontal: 20,
+          ),
+        ),
+      ),
     );
   }
 
-  //Membuat Textbox password
   Widget _passwordTextField() {
-    return TextFormField(
-      decoration: const InputDecoration(labelText: "Password"),
-      keyboardType: TextInputType.text,
-      obscureText: true,
-      controller: _passwordTextboxController,
-      validator: (value) {
-        if (value!.isEmpty) {
-          return "Password harus diisi";
-        }
-        return null;
-      },
+    return Container(
+      margin: const EdgeInsets.only(bottom: 25),
+      child: TextFormField(
+        controller: _passwordTextboxController,
+        obscureText: true,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return "Password harus diisi";
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          hintText: "Masukkan Password",
+          prefixIcon: const Icon(Icons.lock),
+         
+
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide.none,
+          ),
+
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(
+           
+            ),
+          ),
+
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: const BorderSide(
+              width: 2,
+            ),
+          ),
+
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 18,
+            horizontal: 20,
+          ),
+        ),
+      ),
     );
   }
 
-  //Membuat Tombol Login
   Widget _buttonLogin() {
-    return ElevatedButton(
-      child: const Text("Login"),
-      onPressed: () {
-        var validate = _formKey.currentState!.validate();
+  return SizedBox(
+    width: double.infinity,
+    height: 50,
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+      ),
+      child: _isLoading
+          ? const CircularProgressIndicator(
+            )
+          : const Text(
+              "LOGIN",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+        onPressed: () {
+          var validate =
+              _formKey.currentState!.validate();
 
-        if (validate) {
-          if (!_isLoading) _submit();
-        }
-      },
+          if (validate) {
+            if (!_isLoading) _submit();
+          }
+        },
+      ),
     );
   }
 
@@ -140,7 +218,6 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  // Membuat menu untuk membuka halaman registrasi
   Widget _menuRegistrasi() {
     return Center(
       child: InkWell(

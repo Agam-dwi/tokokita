@@ -20,12 +20,23 @@ class _ProdukFormState extends State<ProdukForm> {
   String judul = "TAMBAH PRODUK";
   String tombolSubmit = "SIMPAN";
 
-  final _kodeProdukTextboxController = TextEditingController();
-  final _namaProdukTextboxController = TextEditingController();
-  final _hargaProdukTextboxController = TextEditingController();
-  final _stokTextboxController = TextEditingController();
-  final _satuanTextboxController = TextEditingController();
-  final _penerimaTextboxController = TextEditingController();
+  final _kodeProdukTextboxController =
+      TextEditingController();
+
+  final _namaProdukTextboxController =
+      TextEditingController();
+
+  final _hargaProdukTextboxController =
+      TextEditingController();
+
+  final _stokTextboxController =
+      TextEditingController();
+
+  final _satuanTextboxController =
+      TextEditingController();
+
+  final _penerimaTextboxController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -41,46 +52,167 @@ class _ProdukFormState extends State<ProdukForm> {
 
         _kodeProdukTextboxController.text =
             widget.produk!.kodeProduk!;
+
         _namaProdukTextboxController.text =
             widget.produk!.namaProduk!;
+
         _hargaProdukTextboxController.text =
             widget.produk!.hargaProduk.toString();
+
         _stokTextboxController.text =
             widget.produk!.stok.toString();
+
         _satuanTextboxController.text =
             widget.produk!.satuan!;
+
         _penerimaTextboxController.text =
-            widget.produk!.penerima!;        
+            widget.produk!.penerima!;
       });
-    } else {
-      judul = "TAMBAH PRODUK";
-      tombolSubmit = "SIMPAN";
     }
   }
 
   @override
   Widget build(BuildContext context) {
+
+    final isDark =
+        Theme.of(context).brightness ==
+            Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(judul),
+        centerTitle: true,
       ),
+
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                _kodeProdukTextField(),
-                _namaProdukTextField(),
-                _hargaProdukTextField(),
-                _stokTextField(),
-                _satuanTextField(),
-                _penerimaTextField(),
-                _buttonSubmit(),
-              ],
-            ),
+        padding: const EdgeInsets.all(20),
+
+        child: Form(
+          key: _formKey,
+
+          child: Column(
+            children: [
+
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+
+                decoration: BoxDecoration(
+                  borderRadius:
+                      BorderRadius.circular(20),
+                ),
+
+                child: Column(
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
+
+                  children: [
+                    Text(
+                      judul,
+                      style: const TextStyle(
+                    
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    const Text(
+                      "Lengkapi data produk dengan benar",
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 25),
+
+              Container(
+                padding: const EdgeInsets.all(20),
+
+                decoration: BoxDecoration(
+                  color: Theme.of(context)
+                      .cardColor,
+
+                  borderRadius:
+                      BorderRadius.circular(20),
+
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+
+                child: Column(
+                  children: [
+                    _kodeProdukTextField(),
+                    const SizedBox(height: 16),
+
+                    _namaProdukTextField(),
+                    const SizedBox(height: 16),
+
+                    _hargaProdukTextField(),
+                    const SizedBox(height: 16),
+
+                    _stokTextField(),
+                    const SizedBox(height: 16),
+
+                    _satuanTextField(),
+                    const SizedBox(height: 16),
+
+                    _penerimaTextField(),
+                    const SizedBox(height: 30),
+
+                    _buttonSubmit(),
+                  ],
+                ),
+              ),
+            ],
           ),
+        ),
+      ),
+    );
+  }
+
+  InputDecoration customInputDecoration(
+    String label,
+  ) {
+    return InputDecoration(
+      labelText: label,
+
+
+      filled: true,
+
+      fillColor:
+          Theme.of(context).brightness ==
+                  Brightness.dark
+              ? Colors.grey.shade900
+              : Colors.grey.shade100,
+
+      border: OutlineInputBorder(
+        borderRadius:
+            BorderRadius.circular(15),
+
+        borderSide: BorderSide.none,
+      ),
+
+      enabledBorder: OutlineInputBorder(
+        borderRadius:
+            BorderRadius.circular(15),
+
+        borderSide: BorderSide.none,
+      ),
+
+      focusedBorder: OutlineInputBorder(
+        borderRadius:
+            BorderRadius.circular(15),
+
+        borderSide: BorderSide(
+          color: Colors.orange.shade400,
+          width: 2,
         ),
       ),
     );
@@ -88,11 +220,13 @@ class _ProdukFormState extends State<ProdukForm> {
 
   Widget _kodeProdukTextField() {
     return TextFormField(
-      decoration: const InputDecoration(
-        labelText: "Kode Produk",
+      controller:
+          _kodeProdukTextboxController,
+
+      decoration: customInputDecoration(
+        "Kode Produk",
       ),
-      keyboardType: TextInputType.text,
-      controller: _kodeProdukTextboxController,
+
       validator: (value) {
         if (value!.isEmpty) {
           return "Kode Produk harus diisi";
@@ -104,11 +238,13 @@ class _ProdukFormState extends State<ProdukForm> {
 
   Widget _namaProdukTextField() {
     return TextFormField(
-      decoration: const InputDecoration(
-        labelText: "Nama Produk",
+      controller:
+          _namaProdukTextboxController,
+
+      decoration: customInputDecoration(
+        "Nama Produk",
       ),
-      keyboardType: TextInputType.text,
-      controller: _namaProdukTextboxController,
+
       validator: (value) {
         if (value!.isEmpty) {
           return "Nama Produk harus diisi";
@@ -120,11 +256,15 @@ class _ProdukFormState extends State<ProdukForm> {
 
   Widget _hargaProdukTextField() {
     return TextFormField(
-      decoration: const InputDecoration(
-        labelText: "Harga",
-      ),
+      controller:
+          _hargaProdukTextboxController,
+
       keyboardType: TextInputType.number,
-      controller: _hargaProdukTextboxController,
+
+      decoration: customInputDecoration(
+        "Harga",
+      ),
+
       validator: (value) {
         if (value!.isEmpty) {
           return "Harga harus diisi";
@@ -136,11 +276,14 @@ class _ProdukFormState extends State<ProdukForm> {
 
   Widget _stokTextField() {
     return TextFormField(
-      decoration: const InputDecoration(
-        labelText: "Stok",
-      ),
-      keyboardType: TextInputType.number,
       controller: _stokTextboxController,
+
+      keyboardType: TextInputType.number,
+
+      decoration: customInputDecoration(
+        "Stok",
+      ),
+
       validator: (value) {
         if (value!.isEmpty) {
           return "Stok harus diisi";
@@ -152,11 +295,13 @@ class _ProdukFormState extends State<ProdukForm> {
 
   Widget _satuanTextField() {
     return TextFormField(
-      decoration: const InputDecoration(
-        labelText: "Satuan",
+      controller:
+          _satuanTextboxController,
+
+      decoration: customInputDecoration(
+        "Satuan",
       ),
-      keyboardType: TextInputType.text,
-      controller: _satuanTextboxController,
+
       validator: (value) {
         if (value!.isEmpty) {
           return "Satuan harus diisi";
@@ -168,11 +313,13 @@ class _ProdukFormState extends State<ProdukForm> {
 
   Widget _penerimaTextField() {
     return TextFormField(
-      decoration: const InputDecoration(
-        labelText: "Penerima",
+      controller:
+          _penerimaTextboxController,
+
+      decoration: customInputDecoration(
+        "Penerima",
       ),
-      keyboardType: TextInputType.text,
-      controller: _penerimaTextboxController,
+
       validator: (value) {
         if (value!.isEmpty) {
           return "Penerima harus diisi";
@@ -182,53 +329,107 @@ class _ProdukFormState extends State<ProdukForm> {
     );
   }
 
-  Widget _buttonSubmit() {
-    return OutlinedButton(
-      child: Text(tombolSubmit),
-      onPressed: () {
-        var validate = _formKey.currentState!.validate();
 
-        if (validate) {
-          if (!_isLoading) {
-            if (widget.produk != null) {
-              ubah();
-            } else {
-              simpan();
+  Widget _buttonSubmit() {
+    return SizedBox(
+      width: double.infinity,
+      height: 55,
+
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+        
+
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(15),
+          ),
+        ),
+
+        child: _isLoading
+            ? const CircularProgressIndicator(
+                color: Colors.white,
+              )
+            : Text(
+                tombolSubmit,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  
+                ),
+              ),
+
+        onPressed: () {
+          var validate =
+              _formKey.currentState!.validate();
+
+          if (validate) {
+            if (!_isLoading) {
+              if (widget.produk != null) {
+                ubah();
+              } else {
+                simpan();
+              }
             }
           }
-        }
-      },
+        },
+      ),
     );
   }
 
   void simpan() {
+
     setState(() {
       _isLoading = true;
     });
 
     Produk createProduk = Produk(id: null);
-    createProduk.kodeProduk = _kodeProdukTextboxController.text;
-    createProduk.namaProduk = _namaProdukTextboxController.text;
-    createProduk.hargaProduk = double.parse(_hargaProdukTextboxController.text);
-    createProduk.stok = int.parse(_stokTextboxController.text);
-    createProduk.satuan = _satuanTextboxController.text;
-    createProduk.penerima = _penerimaTextboxController.text;
 
-    ProdukBloc.addProduk(produk: createProduk).then(
+    createProduk.kodeProduk =
+        _kodeProdukTextboxController.text;
+
+    createProduk.namaProduk =
+        _namaProdukTextboxController.text;
+
+    createProduk.hargaProduk = double.parse(
+      _hargaProdukTextboxController.text,
+    );
+
+    createProduk.stok = int.parse(
+      _stokTextboxController.text,
+    );
+
+    createProduk.satuan =
+        _satuanTextboxController.text;
+
+    createProduk.penerima =
+        _penerimaTextboxController.text;
+
+    ProdukBloc.addProduk(
+      produk: createProduk,
+    ).then(
       (value) {
+
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (BuildContext context) => ProdukPage(
+            builder:
+                (BuildContext context) =>
+                    ProdukPage(
               onThemeChanged: () {},
             ),
           ),
         );
       },
+
       onError: (error) {
+
         showDialog(
           context: context,
-          builder: (BuildContext context) => const WarningDialog(
-            description: "Simpan gagal, silahkan coba lagi",
+
+          builder:
+              (BuildContext context) =>
+                  const WarningDialog(
+            description:
+                "Simpan gagal, silahkan coba lagi",
           ),
         );
       },
@@ -240,33 +441,59 @@ class _ProdukFormState extends State<ProdukForm> {
   }
 
   void ubah() {
+
     setState(() {
       _isLoading = true;
     });
 
     Produk updateProduk = Produk(id: null);
-    updateProduk.id = widget.produk!.id;
-    updateProduk.kodeProduk = _kodeProdukTextboxController.text;
-    updateProduk.namaProduk = _namaProdukTextboxController.text;
-    updateProduk.hargaProduk = double.parse(_hargaProdukTextboxController.text);
-    updateProduk.stok = int.parse(_stokTextboxController.text);
-    updateProduk.satuan = _satuanTextboxController.text;
-    updateProduk.penerima = _penerimaTextboxController.text;
 
-    ProdukBloc.updateProduk(produk: updateProduk).then(
+    updateProduk.id = widget.produk!.id;
+
+    updateProduk.kodeProduk =
+        _kodeProdukTextboxController.text;
+
+    updateProduk.namaProduk =
+        _namaProdukTextboxController.text;
+
+    updateProduk.hargaProduk = double.parse(
+      _hargaProdukTextboxController.text,
+    );
+
+    updateProduk.stok = int.parse(
+      _stokTextboxController.text,
+    );
+
+    updateProduk.satuan =
+        _satuanTextboxController.text;
+
+    updateProduk.penerima =
+        _penerimaTextboxController.text;
+
+    ProdukBloc.updateProduk(
+      produk: updateProduk,
+    ).then(
       (value) {
+
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (BuildContext context) => ProdukPage(
+            builder:
+                (BuildContext context) =>
+                    ProdukPage(
               onThemeChanged: () {},
             ),
           ),
         );
       },
+
       onError: (error) {
+
         showDialog(
           context: context,
-          builder: (BuildContext context) => const WarningDialog(
+
+          builder:
+              (BuildContext context) =>
+                  const WarningDialog(
             description:
                 "Permintaan ubah data gagal, silahkan coba lagi",
           ),
